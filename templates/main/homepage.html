@@ -1,0 +1,41 @@
+{% extends  "main/header.html"%}
+
+{% block content %}
+{% load static %}
+
+
+
+<style>
+  .carousel .carousel-item{
+    width: 400px !important;
+  }
+</style>
+
+<div class="container">
+  <h3 style="text-align: center;">Products:</h3>
+  <div class="carousel" id="carousel">
+    {% for product in products %}
+      <a class="carousel-item" href="{{ product.url }}"><img src="{{ product.image.url }}"></a>
+    {% endfor %}
+    <!-- <a class="carousel-item" href="forest_mask"><img src="{% static 'imgs/forestmask.png' %}"></a> -->
+    <!-- <a class="carousel-item" href="forest_mask"><img src="{% static 'imgs/forestmask.png' %}"></a> -->
+    <!-- <a class="carousel-item" href="forest_mask"><img src="{% static 'imgs/forestmask.png' %}"></a> -->
+  </div>
+</div>
+
+ 
+
+<script>
+  var options = {
+    // 'fullWidth':true,
+
+  }
+ document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.carousel');
+    // elems.style.height = '500px';
+    var instances = M.Carousel.init(elems, options);
+    // var instance = M.Carousel.getInstance(elem);
+  });
+</script>
+{% endblock %}
+

@@ -1,0 +1,69 @@
+{% extends  "main/header.html"%}
+
+{% block content %}
+
+<div class="container">
+    <h1>User Information</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+
+    <h2>API Tokens</h2>
+    {% if api_tokens %}
+        <table style="table-layout:fixed;word-wrap: break-word">
+            <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>Created At</th>
+                    <th>Expires At</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for api_token in api_tokens %}
+                    <tr>
+                        <td class="truncate">
+                            <button id="{{api_token.id}}" onclick="copyToken('{{api_token.token}}')">
+                                <i class="material-icons">content_copy</i>
+                            </button>
+                            {{ api_token.token }}
+                        </td>
+                        <td>{{ api_token.get_created_at }}</td>
+                        <td>{{ api_token.get_expires_at }}</td>
+                        <td><a href="{% url 'main:delete_token' api_token.pk %}"><i class="material-icons">delete</i></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You don't have API tokens yet, you can create one in the section below.</p>
+    {% endif %}
+
+    <div class="container section">
+        <h2>Create API Token</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="expires_in_hours">Select the date:</label>
+            <input type="text" class="datepicker" id="expires_in_hours" name="expires_in_hours">
+            <input type="submit" value="Create">
+        </form>
+    </div>
+</div>
+
+<script>
+    options = {'format':"yyyy-mm-dd"}
+    document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.datepicker');
+    var instances = M.Datepicker.init(elems, options);
+  });
+
+  function copyToken(text) {
+        navigator.clipboard.writeText(text);
+    }
+
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "America/New_York"
+    document.cookie = "django_timezone=" + timezone;
+</script>
+
+
+
+{% endblock %}
