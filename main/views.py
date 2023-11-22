@@ -13,10 +13,12 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect,JsonResponse,HttpResponse
+from django.db.models import Case, Value, When, F
+from django.db import models
 
 from .forms import NewUserForm
 from .token import account_activation_token
-from .models import APIToken
+from .models import APIToken,Folder,Data
 
 import pytz
 import datetime
@@ -26,10 +28,31 @@ import jwt
 SECRET_KEY_TOKEN = os.environ.get("SECRET_KEY")
 
 def homepage(request):
+    samples = Data.objects.order_by('-created_at')[:3]
+    folder = Folder.objects.get(name="/")
+    datasets = Data.objects.filter(folder=folder)
+    folders = Folder.objects.all()
+    images = Data.objects.annotate(
+    file_format=Case(
+        When(file__endswith='.png', then=Value('.png')),
+        When(file__endswith='.jpg', then=Value('.jpg')),
+        default=Value('other'),
+        output_field=models.CharField()
+    )
+).filter(file_format__in=['.png', '.jpg'])
     return render(request,
                   template_name='main/homepage.html',
-                  context={}
+                  context={
+                      "images":images,
+                      "samples":samples,
+                      "folders":folders,
+                      "datasets":datasets
+                      }
                   )
+
+def pages(request,folder):
+    folder = Folder.objects.get(folder)
+    datasets = Data.objects.filter(folder=folder)
 
 def about(request):
 
@@ -158,3 +181,10 @@ def delete_token(request,pk):
     api_token.delete()
     messages.success(request, "Token deleted successfully")
     return redirect('main:user_page')
+
+
+
+
+def folder_detail(request, slug):
+    folder = get_object_or_404(Folder, slug=slug)
+    return render(request, 'folder_detail.html', {'folder': folder})

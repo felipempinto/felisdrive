@@ -3,39 +3,71 @@
 {% block content %}
 {% load static %}
 
-
-
-<style>
-  .carousel .carousel-item{
-    width: 400px !important;
-  }
-</style>
-
 <div class="container">
-  <h3 style="text-align: center;">Products:</h3>
-  <div class="carousel" id="carousel">
-    {% for product in products %}
-      <a class="carousel-item" href="{{ product.url }}"><img src="{{ product.image.url }}"></a>
+    
+    <div class="row">
+        {% for sample in samples %}
+        <div class="col s12 m4">
+          <div class="card">
+            <div class="card-image">
+              {% comment %} <img src="images/sample-1.jpg"> {% endcomment %}
+              <span class="card-title">Card Title</span>
+            </div>
+            <div class="card-action">
+              <a href="{{sample.file.url}}">{{sample.file.name}}</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    
+
+    <table class="highlight">
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Created at</th>
+              <th>Download</th>
+              <th>Open in new tab</th>
+          </tr>
+        </thead>
+
+        <tbody>
+            {% for folder in folders %}
+                <tr>
+                    <td>{{ folder.name }}</td>
+                    <td>{{ data.get_created_at }}</td>
+                    {% comment %} <td>bbb</td>
+                    <td>AAA</td> {% endcomment %}
+                </tr>
+            {% endfor %}
+            {% for data in datasets %}
+                <tr>
+                    <td>{{ data.get_file }}</td>
+                    <td>{{ data.get_created_at }}</td>
+                    {% comment %} <td>bbb</td>
+                    <td>AAA</td> {% endcomment %}
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+
+
+
+      {% for image in images %}
+        <a data-fancybox="gallery" href="{{ image.file.url }}">
+            <img src="{{ image.file.url }}" alt="{{ image.file.name }}" style="max-width: 100px; max-height: 100px;">
+        </a>
     {% endfor %}
-    <!-- <a class="carousel-item" href="forest_mask"><img src="{% static 'imgs/forestmask.png' %}"></a> -->
-    <!-- <a class="carousel-item" href="forest_mask"><img src="{% static 'imgs/forestmask.png' %}"></a> -->
-    <!-- <a class="carousel-item" href="forest_mask"><img src="{% static 'imgs/forestmask.png' %}"></a> -->
-  </div>
 </div>
 
- 
-
-<script>
-  var options = {
-    // 'fullWidth':true,
-
-  }
- document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.carousel');
-    // elems.style.height = '500px';
-    var instances = M.Carousel.init(elems, options);
-    // var instance = M.Carousel.getInstance(elem);
-  });
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("[data-fancybox]").fancybox({
+            // Add any additional options you need
+        });
+    });
 </script>
+
 {% endblock %}
 

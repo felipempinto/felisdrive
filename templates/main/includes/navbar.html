@@ -2,29 +2,13 @@
 
 
 <nav>
-  <div class="nav-wrapper blue-grey darken-3">
+  <div class="nav-wrapper white">
     <a href="/" class="brand-logo">
-      <img id="logo" class="responsive-img" src="{% static 'imgs/Logo.png'%}" alt="Logo" style="max-width:100px;">
+      <img id="logo" class="responsive-img" src="{% static 'imgs/cloud-storage.png'%}" alt="Logo" style="max-height:60px;">
     </a>
-
-
-    <ul id="dropdown1" class="dropdown-content">
-      {% for product in products %}
-        <li><a href="{{ product.url }}">{{product.name}}</a></li>
-      <!-- <li><a href="/forest_mask">Forest Mask</a></li>
-      <li><a href="">Land Cover</a></li>
-      <li><a href="">Image classification</a></li> -->
-      {% endfor %}
-    </ul>
+    {% comment %} <a href="https://www.flaticon.com/free-icons/storage" title="storage icons">Storage icons created by Hilmy Abiyyu A. - Flaticon</a> {% endcomment %}
 
     <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <!-- <li><a href="">API</a></li> -->
-      <li>
-        <a class="dropdown-trigger" href="#!" data-target="dropdown1">
-          Products
-          <i class="material-icons right">arrow_drop_down</i>
-        </a>
-      </li>
       {% if user.is_authenticated %}
         <!-- <li><a href="/profile/">Profile</a></li> -->
         <li><a href="/user/">Profile</a></li>
@@ -33,18 +17,6 @@
         <li><a href="/login/">Login</a></li>
         <li><a href="/register/">Register</a></li>
       {% endif %}
-
     </ul>
   </div>
 </nav>
-
-<script>
-  const elemsDropdown = document.querySelectorAll(".dropdown-trigger");
-  const instancesDropdown = M.Dropdown.init(elemsDropdown,{
-    coverTrigger:false,
-    constrainWidth:false,
-    alignment:'right',
-  }
-  );
-</script>
-      

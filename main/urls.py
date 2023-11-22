@@ -14,4 +14,6 @@ urlpatterns = [
     path('register/',views.register,name='register'),
     path('user/',views.user_page,name="user_page"),
     path('delete_token/<int:pk>/', views.delete_token, name='delete_token'),
+
+    path('folders/<slug:slug>/', views.folder_detail, name='folder_detail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
