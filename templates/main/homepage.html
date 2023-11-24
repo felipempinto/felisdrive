@@ -3,7 +3,20 @@
 {% block content %}
 {% load static %}
 
-<div class="container center ">
+<div class="container">
+  <div class="center">
+  {% comment %} <form id="deleteForm" method="post" enctype="multipart/form-data" action="{% url 'main:delete' %}">
+    {% csrf_token %}
+  
+    <div class="delete-container">
+      <p>Delete selected files</p>
+      <label for="fileInput" id="deleteButton" class="btn-floating btn-large waves-effect waves-light teal">
+          <i class="material-icons">delete</i>
+      </label>
+      <input type="file" id="fileInput" name="file" style="display:none" multiple/>
+    </div>
+  </form> {% endcomment %}
+
   <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
     {% csrf_token %}
   
@@ -15,22 +28,37 @@
       <input type="file" id="fileInput" name="file" style="display:none" multiple/>
     </div>
   </form>
+
+
+  {% comment %} <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
+    {% csrf_token %}
+  
+    <div class="upload-container">
+      <p>Upload file</p>
+      <label for="fileInput" id="uploadButton" class="btn-floating btn-large waves-effect waves-light teal">
+          <i class="material-icons">cloud_upload</i>
+      </label>
+      <input type="file" id="fileInput" name="file" style="display:none" multiple/>
+    </div>
+  </form> {% endcomment %}
+</div>
 </div>
 
 
 <div class="container">
-    <div class="section">
+    {% comment %} <div class="section">
       {% for image in images %}
         <a href="{{ image.file.url }}" data-fancybox="gallery" data-caption="{{ image.get_file }}">
           <img src="{{ image.file.url }}" style="max-width: 100px; max-height: 100px;"/>
         </a>
       {% endfor %}    
-    </div> 
+    </div>  {% endcomment %}
     
 
     <table class="highlight">
         <thead>
           <tr>
+              <th></th>
               <th>Name</th>
               <th>Created at</th>
               <th>Download</th>
@@ -40,18 +68,36 @@
         <tbody>
             {% for folder in folders %}
                 <tr>
+                  <td></td>
                     <td><i class="material-icons icon">folder</i>&nbsp  {{ folder.name }}</td>
                     <td>{{ data.get_created_at }}</td>
                 </tr>
             {% endfor %}
             {% for data in datasets %}
+            
                 <tr>
-                    <td><i class="material-icons icon">insert_drive_file</i>&nbsp  {{ data.get_file }}</td>
+                    <td><p>
+                      <label>
+                        <input type="checkbox" />
+                        <span></span>
+                      </label>
+                    </p></td>
+                    <td>
+                      {% if data.is_image %}
+                      <a href="{{ data.file.url }}" data-fancybox="gallery" data-caption="{{ data.get_file }}">
+                        <img src="{{ data.file.url }}" style="max-width: 30px; max-height: 30px;"/>
+                        &nbsp  {{ data.get_file }}</a>
+                      {% else %}
+                      <i class="material-icons icon">insert_drive_file</i>&nbsp  {{ data.get_file }}
+                      {% endif %}
+                    </td>
+                    
                     <td>{{ data.get_created_at }}</td>
                     <td><a href="{{ data.file.url }}" download="{{data.get_file}}" target="_blank"><i class="material-icons">file_download</i></a>
                   </td>
                 </tr>
             {% endfor %}
+            
         </tbody>
       </table>
 

@@ -26,6 +26,12 @@ class Folder(models.Model):
 
     def __str__(self):
         return self.name
+    
+image_formats = [
+    ".png",
+    ".jpg",
+    ".jpeg"
+]
 
 class Data(models.Model):
     file = models.FileField()
@@ -45,3 +51,8 @@ class Data(models.Model):
     
     def get_format(self):
         return os.path.splitext(self.file.name)[-1]
+    
+    def is_image(self):
+        if os.path.splitext(self.file.name)[-1] in image_formats:
+            return True
+        return False
