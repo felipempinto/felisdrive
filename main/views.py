@@ -28,7 +28,7 @@ import jwt
 SECRET_KEY_TOKEN = os.environ.get("SECRET_KEY")
 
 def homepage(request):
-    samples = Data.objects.order_by('-created_at')[:3]
+    # samples = Data.objects.order_by('-created_at')[:3]
     folder = Folder.objects.get(name="/")
     datasets = Data.objects.filter(folder=folder)
     folders = Folder.objects.all()
@@ -36,6 +36,7 @@ def homepage(request):
     file_format=Case(
         When(file__endswith='.png', then=Value('.png')),
         When(file__endswith='.jpg', then=Value('.jpg')),
+        When(file__endswith='.jpeg', then=Value('.jpeg')),
         default=Value('other'),
         output_field=models.CharField()
     )
@@ -44,15 +45,39 @@ def homepage(request):
                   template_name='main/homepage.html',
                   context={
                       "images":images,
-                      "samples":samples,
+                    #   "samples":samples,
                       "folders":folders,
-                      "datasets":datasets
+                      "datasets":datasets,
+                      "folder":folder,
                       }
                   )
 
 def pages(request,folder):
     folder = Folder.objects.get(folder)
     datasets = Data.objects.filter(folder=folder)
+
+
+
+# @login_required(login_url='/login/')
+def upload(request,folder):#,source):
+
+    if request.method == 'POST':
+        if folder=="home":
+            folder='/'
+        folder = Folder.objects.get(name=folder)
+        # uploaded_file = request.FILES[f'file']
+        # dataset = Data(file=uploaded_file,folder=folder)
+        # dataset.save()
+
+        # uploaded_file = request.FILES[f'file']
+        files = request.FILES.getlist('file')
+        for file in files:
+            print(file)
+            dataset = Data(file=file,folder=folder)
+            dataset.save()
+
+    return redirect('main:homepage')
+
 
 def about(request):
 

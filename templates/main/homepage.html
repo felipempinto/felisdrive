@@ -3,23 +3,29 @@
 {% block content %}
 {% load static %}
 
+<div class="container center ">
+  <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
+    {% csrf_token %}
+  
+    <div class="upload-container">
+      <p>Upload file</p>
+      <label for="fileInput" id="uploadButton" class="btn-floating btn-large waves-effect waves-light teal">
+          <i class="material-icons">cloud_upload</i>
+      </label>
+      <input type="file" id="fileInput" name="file" style="display:none" multiple/>
+    </div>
+  </form>
+</div>
+
+
 <div class="container">
-    
-    <div class="row">
-        {% for sample in samples %}
-        <div class="col s12 m4">
-          <div class="card">
-            <div class="card-image">
-              {% comment %} <img src="images/sample-1.jpg"> {% endcomment %}
-              <span class="card-title">Card Title</span>
-            </div>
-            <div class="card-action">
-              <a href="{{sample.file.url}}">{{sample.file.name}}</a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
+    <div class="section">
+      {% for image in images %}
+        <a href="{{ image.file.url }}" data-fancybox="gallery" data-caption="{{ image.get_file }}">
+          <img src="{{ image.file.url }}" style="max-width: 100px; max-height: 100px;"/>
+        </a>
+      {% endfor %}    
+    </div> 
     
 
     <table class="highlight">
@@ -28,45 +34,47 @@
               <th>Name</th>
               <th>Created at</th>
               <th>Download</th>
-              <th>Open in new tab</th>
           </tr>
         </thead>
 
         <tbody>
             {% for folder in folders %}
                 <tr>
-                    <td>{{ folder.name }}</td>
+                    <td><i class="material-icons icon">folder</i>&nbsp  {{ folder.name }}</td>
                     <td>{{ data.get_created_at }}</td>
-                    {% comment %} <td>bbb</td>
-                    <td>AAA</td> {% endcomment %}
                 </tr>
             {% endfor %}
             {% for data in datasets %}
                 <tr>
-                    <td>{{ data.get_file }}</td>
+                    <td><i class="material-icons icon">insert_drive_file</i>&nbsp  {{ data.get_file }}</td>
                     <td>{{ data.get_created_at }}</td>
-                    {% comment %} <td>bbb</td>
-                    <td>AAA</td> {% endcomment %}
+                    <td><a href="{{ data.file.url }}" download="{{data.get_file}}" target="_blank"><i class="material-icons">file_download</i></a>
+                  </td>
                 </tr>
             {% endfor %}
         </tbody>
       </table>
 
-
-
-      {% for image in images %}
-        <a data-fancybox="gallery" href="{{ image.file.url }}">
-            <img src="{{ image.file.url }}" alt="{{ image.file.name }}" style="max-width: 100px; max-height: 100px;">
-        </a>
-    {% endfor %}
+      
 </div>
 
+<style>
+  .icon {
+      vertical-align: middle;
+  }
+</style>
+
 <script type="text/javascript">
-    $(document).ready(function () {
-        $("[data-fancybox]").fancybox({
-            // Add any additional options you need
-        });
-    });
+  Fancybox.bind("[data-fancybox]", {
+
+  });
+  
+  
+  document.getElementById('fileInput').addEventListener('change', function() {
+    // Automatically submit the form when a file is selected
+    document.getElementById('uploadForm').submit();
+  });
+
 </script>
 
 {% endblock %}

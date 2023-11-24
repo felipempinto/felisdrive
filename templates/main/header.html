@@ -4,10 +4,11 @@
   <title>Deep forest</title>
   {% load static %}
 
-  <link rel="stylesheet" type="text/css" href="path/to/fancybox.min.css">
-<script type="text/javascript" src="path/to/jquery.min.js"></script>
-<script type="text/javascript" src="path/to/fancybox.min.js"></script>
-      <!-- Compiled and minified CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+  />
       <link rel="stylesheet" href="{% static 'materialize/css/materialize.css' %}">
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <link rel="icon" href="/static/imgs/cloud-storage.png">
@@ -23,6 +24,9 @@
       <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 </head>
 <body>
 {% include "main/includes/navbar.html" %}
