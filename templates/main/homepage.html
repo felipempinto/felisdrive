@@ -5,6 +5,8 @@
 
 <div class="container">
   <div class="center">
+    <div class="row">
+      <div class="col s12">
   {% comment %} <form id="deleteForm" method="post" enctype="multipart/form-data" action="{% url 'main:delete' %}">
     {% csrf_token %}
   
@@ -16,7 +18,9 @@
       <input type="file" id="fileInput" name="file" style="display:none" multiple/>
     </div>
   </form> {% endcomment %}
+</div>
 
+  <div class="col s4">
   <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
     {% csrf_token %}
   
@@ -28,19 +32,23 @@
       <input type="file" id="fileInput" name="file" style="display:none" multiple/>
     </div>
   </form>
+</div>
 
-
-  {% comment %} <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
+  {% comment %} <div class="col s4">
+  <form id="downloadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
     {% csrf_token %}
   
     <div class="upload-container">
-      <p>Upload file</p>
+      <p>Download file</p>
       <label for="fileInput" id="uploadButton" class="btn-floating btn-large waves-effect waves-light teal">
           <i class="material-icons">cloud_upload</i>
       </label>
       <input type="file" id="fileInput" name="file" style="display:none" multiple/>
     </div>
-  </form> {% endcomment %}
+  </form>  
+  </div> {% endcomment %}
+</div>
+</div>
 </div>
 </div>
 
@@ -67,15 +75,19 @@
 
         <tbody>
             {% for folder in folders %}
-                <tr>
+
+              {% if folder.slug %}
+              
+                <tr data-href="{% url 'main:folder_detail' slug=folder.slug %}"   ondblclick="openLink(this)">
                   <td></td>
                     <td><i class="material-icons icon">folder</i>&nbsp  {{ folder.name }}</td>
                     <td>{{ data.get_created_at }}</td>
                 </tr>
+              {% endif %}
             {% endfor %}
             {% for data in datasets %}
             
-                <tr>
+                <tr >
                     <td><p>
                       <label>
                         <input type="checkbox" />
@@ -120,6 +132,11 @@
     // Automatically submit the form when a file is selected
     document.getElementById('uploadForm').submit();
   });
+
+  function openLink(row) {
+    var url = row.getAttribute("data-href");
+    window.location.href = url;
+  }
 
 </script>
 

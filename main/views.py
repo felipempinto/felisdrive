@@ -31,26 +31,34 @@ def homepage(request):
     # samples = Data.objects.order_by('-created_at')[:3]
     folder = Folder.objects.get(name="/")
     datasets = Data.objects.filter(folder=folder)
+    #TODO:
+    # Select only folders without "/" in the name
     folders = Folder.objects.all()
-    images = Data.objects.annotate(
-    file_format=Case(
-        When(file__endswith='.png', then=Value('.png')),
-        When(file__endswith='.jpg', then=Value('.jpg')),
-        When(file__endswith='.jpeg', then=Value('.jpeg')),
-        default=Value('other'),
-        output_field=models.CharField()
-    )
-).filter(file_format__in=['.png', '.jpg'])
+
     return render(request,
                   template_name='main/homepage.html',
                   context={
-                      "images":images,
-                    #   "samples":samples,
                       "folders":folders,
                       "datasets":datasets,
                       "folder":folder,
                       }
                   )
+
+
+def folder_detail(request, slug):
+    folder = get_object_or_404(Folder, slug=slug)
+    datasets = Data.objects.filter(folder=folder)
+    #TODO:
+    # Select folders that starts with the folder name
+    # folders = Folder.objects.all()
+
+    return render(request, 'main/homepage.html', {
+        # "folders":folders,
+        "datasets":datasets,
+        "folder":folder,
+
+        })
+
 
 def pages(request,folder):
     folder = Folder.objects.get(folder)
@@ -209,7 +217,3 @@ def delete_token(request,pk):
 
 
 
-
-def folder_detail(request, slug):
-    folder = get_object_or_404(Folder, slug=slug)
-    return render(request, 'folder_detail.html', {'folder': folder})
