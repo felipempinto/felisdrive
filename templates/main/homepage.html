@@ -20,7 +20,7 @@
       </div>
 
   <div class="col s4">
-  <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
+  <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder=location %}">
     {% csrf_token %}
   
     <div class="upload-container">
@@ -53,7 +53,7 @@
 </div>
 
 
-<div class="container">
+<div class="container" id="dropArea" class="drop-area">
     {% comment %} <div class="section">
       {% for image in images %}
         <a href="{{ image.file.url }}" data-fancybox="gallery" data-caption="{{ image.get_file }}">
@@ -197,9 +197,78 @@ function deleteSelectedItems(selectedItems) {
     };
 
     xhr.send(data);
+    M.toast({html: 'Files deleted successfully!', classes: 'rounded'});
 }
 
+document.getElementById('fileInput').addEventListener('change', function() {
+  handleFiles(this.files);
+});
+
+function handleDragOver(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.getElementById('dropArea').classList.add('drag-over');
+}
+
+function handleDragLeave(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.getElementById('dropArea').classList.remove('drag-over');
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.getElementById('dropArea').classList.remove('drag-over');
+
+  var files = event.dataTransfer.files;
+  handleFiles(files);
+}
+
+function handleFiles(files) {
+  var formData = new FormData();
+
+  for (var i = 0; i < files.length; i++) {
+      formData.append('file', files[i]);
+      console.log(files[i])
+  }
+  var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '{% url "main:upload" folder=location %}', true);
+  xhr.setRequestHeader('X-CSRFToken', csrfToken); 
+  
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+            M.toast({html: 'Files uploaded successfully!', classes: 'rounded'});
+            location.reload();
+        } else {
+            M.toast({html: 'File upload failed!', classes: 'rounded'});
+        }
+    }
+};
+  xhr.send(formData);
+}
+
+// Add event listeners to the drop area
+var dropArea = document.getElementById('dropArea');
+dropArea.addEventListener('dragover', handleDragOver);
+dropArea.addEventListener('dragleave', handleDragLeave);
+dropArea.addEventListener('drop', handleDrop);
+
 </script>
+
+<style>
+  .drop-area {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+  }
+
+  .drag-over {
+      background-color: #f0f8ff; /* Light blue background when dragging over */
+  }
+</style>
 
 {% endblock %}
 

@@ -42,6 +42,7 @@ def homepage(request):
                       "folders":folders,
                       "datasets":datasets,
                       "folder":folder,
+                      "location":"home",
                       }
                   )
 
@@ -75,6 +76,7 @@ def folder_detail(request, slug):
         # "folders":folders,
         "datasets":datasets,
         "folder":folder,
+        "location":slug
 
         })
 
@@ -89,22 +91,22 @@ def pages(request,folder):
 def upload(request,folder):#,source):
 
     if request.method == 'POST':
+        
         if folder=="home":
             folder='/'
-        folder = Folder.objects.get(name=folder)
-        # uploaded_file = request.FILES[f'file']
-        # dataset = Data(file=uploaded_file,folder=folder)
-        # dataset.save()
-
-        # uploaded_file = request.FILES[f'file']
+        folder_object = Folder.objects.get(name=folder)
         files = request.FILES.getlist('file')
+        print(request.FILES)
         for file in files:
             print(file)
-            dataset = Data(file=file,folder=folder)
+            dataset = Data(file=file,folder=folder_object)
             dataset.save()
-
-    return redirect('main:homepage')
-
+    # if folder=="/":
+    #     return redirect('main:homepage')
+    # else:
+    #     return redirect(f'/folders/{folder}/')
+            
+    return redirect(request.META['HTTP_REFERER'])
 
 def about(request):
 
