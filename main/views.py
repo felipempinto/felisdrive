@@ -64,6 +64,18 @@ def delete_files(request):
 
     return redirect('main:homepage')
 
+def create_folder_view(request):
+    if request.method == 'POST':
+        folder_name = request.POST.get('folder_name')
+
+        if Folder.objects.filter(name=folder_name).exists():
+            messages.error(request, 'A folder with the same name already exists.')
+        else:
+            # Create the folder
+            Folder.objects.create(name=folder_name)
+            messages.success(request, f'Folder "{folder_name}" created successfully.')
+
+    return redirect('main:homepage') 
 
 def folder_detail(request, slug):
     folder = get_object_or_404(Folder, slug=slug)
