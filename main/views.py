@@ -20,6 +20,7 @@ from .forms import NewUserForm
 from .token import account_activation_token
 from .models import APIToken,Folder,Data
 
+import json
 import pytz
 import datetime
 import os
@@ -43,6 +44,24 @@ def homepage(request):
                       "folder":folder,
                       }
                   )
+
+
+def delete_files(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        selected_items = data.get('selected_items', [])
+
+        for item_id in selected_items:
+            try:
+                data_item = Data.objects.get(pk=item_id)
+                data_item.delete()
+            except Data.DoesNotExist:
+                pass 
+
+        return JsonResponse({'message': 'Items deleted successfully'})
+
+    return redirect('main:homepage')
 
 
 def folder_detail(request, slug):

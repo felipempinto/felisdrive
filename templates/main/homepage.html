@@ -6,19 +6,18 @@
 <div class="container">
   <div class="center">
     <div class="row">
-      <div class="col s12">
-  {% comment %} <form id="deleteForm" method="post" enctype="multipart/form-data" action="{% url 'main:delete' %}">
-    {% csrf_token %}
+      <div class="col s4">
   
-    <div class="delete-container">
-      <p>Delete selected files</p>
-      <label for="fileInput" id="deleteButton" class="btn-floating btn-large waves-effect waves-light teal">
-          <i class="material-icons">delete</i>
-      </label>
-      <input type="file" id="fileInput" name="file" style="display:none" multiple/>
-    </div>
-  </form> {% endcomment %}
-</div>
+        <form id="deleteForm" method="post" enctype="multipart/form-data" action="{% url 'main:delete_files' %}">
+          {% csrf_token %}
+          <div class="delete-container">
+            <p>Delete selected files</p>
+            <label id="deleteButton" class="btn-floating btn-large waves-effect waves-light teal">
+                <i class="material-icons">delete</i>
+            </label>
+          </div>
+        </form>
+      </div>
 
   <div class="col s4">
   <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
@@ -33,20 +32,21 @@
     </div>
   </form>
 </div>
+  
 
-  {% comment %} <div class="col s4">
+<div class="col s4">
   <form id="downloadForm" method="post" enctype="multipart/form-data" action="{% url 'main:upload' folder='home' %}">
     {% csrf_token %}
   
     <div class="upload-container">
-      <p>Download file</p>
+      <p>Create new folder</p>
       <label for="fileInput" id="uploadButton" class="btn-floating btn-large waves-effect waves-light teal">
-          <i class="material-icons">cloud_upload</i>
+          <i class="material-icons">create_new_folder</i>
       </label>
       <input type="file" id="fileInput" name="file" style="display:none" multiple/>
     </div>
   </form>  
-  </div> {% endcomment %}
+  </div> 
 </div>
 </div>
 </div>
@@ -63,10 +63,15 @@
     </div>  {% endcomment %}
     
 
-    <table class="highlight">
+    <table id="data-table" class="highlight">
         <thead>
           <tr>
-              <th></th>
+              <th><p>
+                <label>
+                  <input type="checkbox" />
+                  <span></span>
+                </label>
+              </p></th>
               <th>Name</th>
               <th>Created at</th>
               <th>Download</th>
@@ -87,10 +92,10 @@
             {% endfor %}
             {% for data in datasets %}
             
-                <tr >
+                <tr>
                     <td><p>
                       <label>
-                        <input type="checkbox" />
+                        <input type="checkbox" id={{data.pk}} />
                         <span></span>
                       </label>
                     </p></td>
@@ -137,6 +142,62 @@
     var url = row.getAttribute("data-href");
     window.location.href = url;
   }
+
+  var selectAllCheckbox = document.querySelector('#data-table thead input[type="checkbox"]');
+    selectAllCheckbox.addEventListener('change', function() {
+        // Get all checkboxes in the table body
+        var checkboxes = document.querySelectorAll('#data-table tbody input[type="checkbox"]');
+
+        // Set the state of all other checkboxes based on the "Select All" checkbox
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
+
+  document.getElementById('deleteButton').addEventListener('click', function() {
+    var selectedItems = getSelectedItems();
+    if (selectedItems.length > 0) {
+        deleteSelectedItems(selectedItems);
+    } else {
+        alert('No items selected for deletion.');
+    }
+});
+
+function getSelectedItems() {
+    var selectedItems = [];
+    var checkboxes = document.querySelectorAll('#data-table input[type="checkbox"]');
+    console.log(checkboxes)
+
+    checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+            var itemId = checkbox.id;
+            if (itemId.trim() !== '') {
+              selectedItems.push(itemId);
+          }
+        }
+    });
+
+    return selectedItems;
+}
+
+function deleteSelectedItems(selectedItems) {
+    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "main:delete_files" %}', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRFToken', csrfToken); 
+
+    var data = JSON.stringify({ selected_items: selectedItems });
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log('Items deleted successfully');
+            location.reload();
+        }
+    };
+
+    xhr.send(data);
+}
 
 </script>
 

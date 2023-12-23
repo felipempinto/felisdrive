@@ -16,6 +16,8 @@ urlpatterns = [
     path('delete_token/<int:pk>/', views.delete_token, name='delete_token'),
     # path("upload/<source>/",views.upload,name='upload'),
     path("upload/<str:folder>/",views.upload,name='upload'),
+    path("delete/",views.delete_files,name="delete_files"),
+    # path("create_folder/",views.create_folder,name="create_folder"),
 
     path('folders/<slug:slug>/', views.folder_detail, name='folder_detail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
